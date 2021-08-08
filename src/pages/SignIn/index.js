@@ -1,34 +1,40 @@
-
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../contexts/auth';
+
 import './signin.css';
-import logo from '../../assets/logo.png';
+import Logo from '../../assets/logo.png'
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  function Acessar(e) {
+  const { signIn, loadingAuth } = useContext(AuthContext);
+
+  function acessar(e) {
     e.preventDefault();
-  };
+
+    if (email !== '' && senha !== '') {
+      signIn(email, senha)
+    }
+  }
 
   return (
     <div className="container-center">
       <div className="login">
         <div className="login-area">
-          <img src={logo} alt="logo" />
+          <img src={Logo} alt="Sistema Logo" />
         </div>
 
-        <form onSubmit={Acessar} >
-          <h1> Entra</h1>
-          <input type="text" placeholder="teste@teste.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="********" value={senha} onChange={(e) => setSenha(e.target.value)} />
-          <button type="submit" > Acessar</button>
+        <form onSubmit={acessar}>
+          <h1>Entrar</h1>
+          <input type="text" placeholder="email@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="password" placeholder="*******" value={senha} onChange={(e) => setSenha(e.target.value)} />
+          <button type="submit">{loadingAuth ? 'Carregando...' : 'Acessar'}</button>
         </form>
 
-        <Link to="/register" >Criar Conta</Link>
+        <Link to="/register">Criar conta</Link>
       </div>
-
     </div>
-  )
+  );
 }

@@ -1,4 +1,5 @@
 
+
 import { useContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth';
@@ -8,14 +9,13 @@ export default function RouteWrapper({
   isPrivate,
   ...rest
 }) {
-
   const { signed, loading } = useContext(AuthContext);
+
+
 
   if (loading) {
     return (
-      <div>
-
-      </div>
+      <div></div>
     )
   }
 
@@ -31,9 +31,9 @@ export default function RouteWrapper({
   return (
     <Route
       {...rest}
-      render={
-        props => (<Component {...props} />)
-      }
+      render={props => (
+        <Component {...props} />
+      )}
     />
   )
 }
