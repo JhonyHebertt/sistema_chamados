@@ -1,6 +1,7 @@
 
 import { useState, createContext, useEffect } from 'react';
 import firebase from '../services/firebaseConnection';
+import { toast } from 'react-toastify';
 
 export const AuthContext = createContext({});
 
@@ -35,7 +36,8 @@ function AuthProvider({ children }) {
       .then(async (value) => {
         let uid = value.user.uid;
 
-        const usuario = await firebase.firestore().collection('users').doc(uid).get();
+        const usuario = await firebase.firestore().collection('users')
+          .doc(uid).get();
 
         let data = {
           uid: uid,
@@ -47,15 +49,18 @@ function AuthProvider({ children }) {
         setUser(data);
         storageUser(data);
         setLoadingAuth(false);
+        toast.success('Bem vindo de volta!');
 
 
       })
       .catch((error) => {
         console.log(error);
+        toast.error('Ops algo deu errado!');
         setLoadingAuth(false);
       })
 
   }
+
 
   //Cadastrando um novo usuario
   async function signUp(email, password, nome) {
@@ -81,21 +86,26 @@ function AuthProvider({ children }) {
             setUser(data);
             storageUser(data);
             setLoadingAuth(false);
+            toast.success('Bem vindo a plataforma!');
 
           })
 
       })
       .catch((error) => {
         console.log(error);
+        toast.error('Ops algo deu errado!');
         setLoadingAuth(false);
       })
 
   }
 
+
   //Salvando no localStorage os dados do usuario
   function storageUser(data) {
     localStorage.setItem('Sistema CRM', JSON.stringify(data));
   }
+
+
 
   //Logout do usuario
   async function signOut() {
@@ -103,6 +113,7 @@ function AuthProvider({ children }) {
     localStorage.removeItem('Sistema CRM');
     setUser(null);
   }
+
 
   return (
     <AuthContext.Provider
@@ -113,7 +124,9 @@ function AuthProvider({ children }) {
         signUp,
         signOut,
         signIn,
-        loadingAuth
+        loadingAuth,
+        setUser,
+        storageUser
       }}
     >
       {children}
