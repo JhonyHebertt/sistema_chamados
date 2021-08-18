@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { AuthContext } from '../../contexts/auth';
@@ -9,15 +10,17 @@ import './new.css';
 import { FiPlus } from 'react-icons/fi'
 
 export default function New() {
+  const { id } = useParams();
+  const history = useHistory();
 
   const [carregandoClientes, setCarregandoClientes] = useState(true);
   const [clientes, setClientes] = useState([]);
   const [clienteSelecionado, setClienteSelecionado] = useState(0);
+  const [editCliente, setEditCliente] = useState(false);
 
   const [assunto, setAssunto] = useState('Suporte');
   const [status, setStatus] = useState('Aberto');
   const [complemento, setComplemento] = useState('');
-
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -42,6 +45,11 @@ export default function New() {
 
           setClientes(lista);
           setCarregandoClientes(false);
+
+          if (id) {
+            fCarregarid(lista);
+          }
+
         })
         .catch((error) => {
           console.log(error);
@@ -50,35 +58,77 @@ export default function New() {
         })
     }
     buscarClientes();
-  }, []);
+  }, [id]);
+
+  async function fCarregarid(lista) {
+    await firebase.firestore().collection('chamados').doc(id).get()
+      .then((snapshot) => {
+        setAssunto(snapshot.data().assunto);
+        setStatus(snapshot.data().status);
+        setComplemento(snapshot.data().complemento);
+
+        let index = lista.findIndex(item => item.id === snapshot.data().clienteId);
+        setClienteSelecionado(index);
+        setEditCliente(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        setEditCliente(false);
+      })
+  }
 
   async function Registrar(e) {
     e.preventDefault();
 
-    await firebase.firestore().collection('chamados').add({
-      created: new Date(),
-      cliente: clientes[clienteSelecionado].nomeFantasia,
-      clienteId: clientes[clienteSelecionado].id,
-      assunto: assunto,
-      status: status,
-      complemento: complemento,
-      userId: user.uid
-    })
-      .then(() => {
-        toast.success('Chamado registrato!');
-        setComplemento('');
-        setClienteSelecionado(0);
+    if (!editCliente) {
+      await firebase.firestore().collection('chamados').add({
+        created: new Date(),
+        cliente: clientes[clienteSelecionado].nomeFantasia,
+        clienteId: clientes[clienteSelecionado].id,
+        assunto: assunto,
+        status: status,
+        complemento: complemento,
+        userId: user.uid
       })
-      .catch((erro) => {
-        console.log(erro);
-        toast.error('Erro ao salvar!');
+        .then(() => {
+          toast.success('Chamado registrado!');
+          setClienteSelecionado(0);
+          setComplemento('');
+          setAssunto('Suporte');
+          setStatus('Aberto');
+          history.push('/dashboard');
+        })
+        .catch((erro) => {
+          console.log(erro);
+          toast.error('Erro ao salvar!');
+        })
+    }
+    else {
+      await firebase.firestore().collection('chamados').doc(id).update({
+        cliente: clientes[clienteSelecionado].nomeFantasia,
+        clienteId: clientes[clienteSelecionado].id,
+        assunto: assunto,
+        status: status,
+        complemento: complemento,
+        userId: user.uid
       })
+        .then(() => {
+          toast.success('Chamado editado com sucesso!');
+          setClienteSelecionado(0);
+          setComplemento('');
+          setAssunto('Suporte');
+          setStatus('Aberto');
+          history.push('/dashboard');
+        })
+        .catch((error) => { console.log(error); toast.error('Erro ao editar chamado!') })
+    }
 
   }
 
   function carregarClientes(e) {
     setClienteSelecionado(e.target.value);
   }
+
   return (
     <div>
       <Header />

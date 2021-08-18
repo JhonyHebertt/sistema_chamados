@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 
 import Header from '../../components/Header';
 import Title from '../../components/Title';
+import Modal from '../../components/Modal';
 
 import './dashboard.css';
 import { FiMessageSquare, FiPlus, FiSearch, FiEdit2 } from 'react-icons/fi';
@@ -17,6 +18,10 @@ export default function Dashboard() {
   const [carregandoMais, setCarregandoMais] = useState(false);
   const [ehVazio, setEhVazio] = useState(false);
   const [ultDoc, setultDoc] = useState();
+  const [detalheCh, setDetalheCh] = useState();
+  const [janela, setJanela] = useState(false);
+
+
 
   useEffect(() => {
     fCarregandoChs();
@@ -66,6 +71,11 @@ export default function Dashboard() {
   async function fCarregarMaisChs() {
     setCarregandoMais(true);
     await listaCh.startAfter(ultDoc).limit(5).get().then((snapshot) => { fListarChs(snapshot) })
+  }
+
+  function fJanelaDetalhes(item) {
+    setJanela(!janela);
+    setDetalheCh(item);
   }
 
   if (carregando) {
@@ -132,12 +142,12 @@ export default function Dashboard() {
                       </td>
                       <td data-label="Cadastrado">{item.createdFormated}</td>
                       <td data-label="#">
-                        <button className="action" style={{ backgroundColor: '#3583f6' }}>
+                        <button className="action" style={{ backgroundColor: '#3583f6' }} onClick={() => fJanelaDetalhes(item)} >
                           <FiSearch color="#FFF" size={17} />
                         </button>
-                        <button className="action" style={{ backgroundColor: '#F6a935' }}>
+                        <Link to={`/edit/${item.id}`} className="action" style={{ backgroundColor: '#F6a935' }}>
                           <FiEdit2 color="#FFF" size={17} />
-                        </button>
+                        </Link>
                       </td>
                     </tr>
                   )
@@ -150,6 +160,12 @@ export default function Dashboard() {
           </>
         )}
       </div>
+      {janela && (
+        <Modal
+          conteudo={detalheCh}
+          close={fJanelaDetalhes}
+        />
+      )}
     </div>
   )
 }
