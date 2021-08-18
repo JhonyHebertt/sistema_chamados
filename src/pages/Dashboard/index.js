@@ -21,22 +21,21 @@ export default function Dashboard() {
   const [detalheCh, setDetalheCh] = useState();
   const [janela, setJanela] = useState(false);
 
-
-
   useEffect(() => {
+    async function fCarregandoChs() {
+      await listaCh.limit(5).get()
+        .then((snapshot) => { fListarChs(snapshot) })
+        .catch((erro) => {
+          console.log(erro);
+          setCarregandoMais(false)
+        })
+      setCarregando(false);
+    }
     fCarregandoChs();
     return () => { }
   }, []);
 
-  async function fCarregandoChs() {
-    await listaCh.limit(5).get()
-      .then((snapshot) => { fListarChs(snapshot) })
-      .catch((erro) => {
-        console.log(erro);
-        setCarregandoMais(false)
-      })
-    setCarregando(false);
-  }
+
 
   async function fListarChs(snapshot) {
     const listaVazia = snapshot.size === 0;

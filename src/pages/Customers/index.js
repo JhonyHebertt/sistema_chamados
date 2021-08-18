@@ -13,9 +13,7 @@ export default function Customers() {
   const [cnpj, setCnpj] = useState('');
   const [endereco, setEndereco] = useState('');
 
-
-
-  async function Salvar(e) {
+  async function fSalvar(e) {
     e.preventDefault();
 
     if (nomeFantasia !== '' && cnpj !== '' && endereco !== '') {
@@ -52,7 +50,7 @@ export default function Customers() {
         </Title>
 
         <div className="container">
-          <form className="form-profile customers" onSubmit={Salvar}>
+          <form className="form-profile customers" onSubmit={fSalvar}>
             <label>Nome fantasia</label>
             <input type="text" placeholder="Nome da sua empresa" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
 

@@ -11,16 +11,17 @@ import { FiSettings, FiUpload } from 'react-icons/fi';
 import './profile.css';
 
 export default function Profile() {
-  const { user, signOut, setUser, storageUser } = useContext(AuthContext);
+  const { user, setUser, storageUser } = useContext(AuthContext);
 
   const [nome, setNome] = useState(user && user.nome);
-  const [email, setEmail] = useState(user && user.email);
+  const email = (user && user.email);
   const [avatarUrl, setAvatarUrl] = useState(user && user.avatarUrl);
   const [ImgUpload, setImgUpload] = useState(null);
 
-  async function Savar(e) {
+  async function fSalvar(e) {
     e.preventDefault();
-    //salva só o nome
+
+    //salvar só o nome
     if (ImgUpload === null && nome !== '') {
       await firebase.firestore().collection('users').doc(user.uid).update({ nome: nome })
         .then(() => {
@@ -32,13 +33,13 @@ export default function Profile() {
           storageUser(data);
         })
     }
-    else //salva o nome e a imagem
+    else //salvar nome e imagem
       if (ImgUpload !== null && nome !== '') {
-        SalvarDados()
+        fSalvarDados()
       }
   }
 
-  function CarregarImg(e) {
+  function fCarregarImg(e) {
     if (e.target.files[0]) {
       const imagem = e.target.files[0];
 
@@ -54,29 +55,31 @@ export default function Profile() {
     }
   }
 
-  async function SalvarDados() {
+  async function fSalvarDados() {
     const idAtual = user.uid;
 
     const upload = await firebase.storage().ref(`images/${idAtual}/${ImgUpload.name}`).put(ImgUpload).then(
       async () => {
-        await firebase.storage().ref(`images/${idAtual}`).child(ImgUpload.name).getDownloadURL().then(
-          async (url) => {
-            let urlFoto = url;
+        await firebase.storage().ref(`images/${idAtual}`).child(ImgUpload.name).getDownloadURL()
+          .then(
+            async (url) => {
+              let urlFoto = url;
 
-            await firebase.firestore().collection('users').doc(user.uid).update({
-              avatarUrl: urlFoto,
-              nome: nome
-            })
-              .then(() => {
-                let data = {
-                  ...user,
-                  avatarUrl: urlFoto,
-                  nome: nome
-                };
-                setUser(data);
-                storageUser(data);
+              await firebase.firestore().collection('users').doc(user.uid).update({
+                avatarUrl: urlFoto,
+                nome: nome
               })
-          })
+                .then(() => {
+                  let data = {
+                    ...user,
+                    avatarUrl: urlFoto,
+                    nome: nome
+                  };
+                  setUser(data);
+                  storageUser(data);
+                })
+            }
+          )
       })
   }
 
@@ -90,14 +93,14 @@ export default function Profile() {
         </Title>
 
         <div className="container">
-          <form className="form-profile" onSubmit={Savar} >
+          <form className="form-profile" onSubmit={fSalvar} >
 
             <label className="label-avatar">
               <span>
                 <FiUpload color="#FFF" size={25} />
               </span>
 
-              <input type="file" accept="image/*" onChange={CarregarImg} /><br />
+              <input type="file" accept="image/*" onChange={fCarregarImg} /><br />
               {avatarUrl === null ?
                 <img src={avatar} width="250" height="250" alt="Foto de perfil do usuario" />
                 :
@@ -115,13 +118,6 @@ export default function Profile() {
 
           </form>
         </div>
-
-        <div className="container">
-          <button className="logout-btn" onClick={() => signOut()} >
-            Sair
-          </button>
-        </div>
-
       </div>
     </div>
   )

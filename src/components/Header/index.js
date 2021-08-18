@@ -5,29 +5,37 @@ import { AuthContext } from '../../contexts/auth';
 import avatar from '../../assets/avatar.png';
 
 import { Link } from 'react-router-dom';
-import { FiHome, FiUser, FiSettings } from "react-icons/fi";
+import { FiHome, FiUser, FiSettings, FiLogOut } from "react-icons/fi";
 
-export default function Header(){
-  const { user } = useContext(AuthContext);
+export default function Header() {
+  const { user, fDeslogar } = useContext(AuthContext);
 
-  return(
+  return (
     <div className="sidebar">
       <div>
-        <img src={user.avatarUrl === null ? avatar : user.avatarUrl } alt="Foto avatar" />
+        <img src={user.avatarUrl === null ? avatar : user.avatarUrl} alt="Foto avatar" />
       </div>
 
       <Link to="/dashboard">
         <FiHome color="#FFF" size={24} />
         Chamados
       </Link>
+
       <Link to="/customers">
         <FiUser color="#FFF" size={24} />
         Clientes
-      </Link>    
+      </Link>
+
       <Link to="/profile">
         <FiSettings color="#FFF" size={24} />
         Configurações
-      </Link>           
+      </Link>
+
+      <Link onClick={() => fDeslogar()} >
+        <FiLogOut color="#FFF" size={24} />
+        Sair
+      </Link>
+
     </div>
   )
 }

@@ -10,13 +10,13 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const { signUp, loadingAuth } = useContext(AuthContext);
+  const { fCadastrar, loadingAuth } = useContext(AuthContext);
 
-  function acessar(e) {
+  function fCadastro(e) {
     e.preventDefault();
 
     if (nome !== '' && email !== '' && senha !== '') {
-      signUp(email, senha, nome)
+      fCadastrar(email, senha, nome)
     }
 
   }
@@ -28,7 +28,7 @@ export default function SignUp() {
           <img src={logo} alt="Logo" />
         </div>
 
-        <form onSubmit={acessar}>
+        <form onSubmit={fCadastro}>
           <h1>Cadastrar</h1>
           <input type="text" placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} />
           <input type="text" placeholder="email@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />

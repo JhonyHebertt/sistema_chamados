@@ -9,13 +9,13 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const { signIn, loadingAuth } = useContext(AuthContext);
+  const { fLogar, loadingAuth } = useContext(AuthContext);
 
-  function acessar(e) {
+  function fAcessar(e) {
     e.preventDefault();
 
     if (email !== '' && senha !== '') {
-      signIn(email, senha)
+      fLogar(email, senha)
     }
   }
 
@@ -26,7 +26,7 @@ export default function SignIn() {
           <img src={Logo} alt="Sistema Logo" />
         </div>
 
-        <form onSubmit={acessar}>
+        <form onSubmit={fAcessar}>
           <h1>Entrar</h1>
           <input type="text" placeholder="email@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
           <input type="password" placeholder="*******" value={senha} onChange={(e) => setSenha(e.target.value)} />

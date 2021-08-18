@@ -4,14 +4,8 @@ import { useContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth';
 
-export default function RouteWrapper({
-  component: Component,
-  isPrivate,
-  ...rest
-}) {
-  const { signed, loading } = useContext(AuthContext);
-
-
+export default function RouteWrapper({ component: Component, isPrivate, ...rest }) {
+  const { logado, loading } = useContext(AuthContext);
 
   if (loading) {
     return (
@@ -19,14 +13,14 @@ export default function RouteWrapper({
     )
   }
 
-  if (!signed && isPrivate) {
+  if (!logado && isPrivate) {
     return <Redirect to="/" />
   }
 
-  if (signed && !isPrivate) {
+  //Não deixa voltar pra pagina de login/cadastro caso esteja logado
+  if (logado && !isPrivate) {
     return <Redirect to="/dashboard" />
   }
-
 
   return (
     <Route

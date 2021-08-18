@@ -77,7 +77,7 @@ export default function New() {
       })
   }
 
-  async function Registrar(e) {
+  async function fRegistrar(e) {
     e.preventDefault();
 
     if (!editCliente) {
@@ -125,7 +125,7 @@ export default function New() {
 
   }
 
-  function carregarClientes(e) {
+  function fCarregarClientes(e) {
     setClienteSelecionado(e.target.value);
   }
 
@@ -140,13 +140,13 @@ export default function New() {
 
         <div className="container">
 
-          <form className="form-profile" onSubmit={Registrar} >
+          <form className="form-profile" onSubmit={fRegistrar} >
 
             <label>Cliente</label>
             {carregandoClientes ? (
               <input type="text" disabled={true} value="Carregando clientes..." />
             ) : (
-              <select value={clienteSelecionado} onChange={carregarClientes} >
+              <select value={clienteSelecionado} onChange={fCarregarClientes} >
                 {clientes.map((item, index) => {
                   return (
                     <option key={item.id} value={index} >
@@ -179,7 +179,7 @@ export default function New() {
             <label>Complemento</label>
             <textarea type="text" placeholder="Descreva seu problema (opcional)." value={complemento} onChange={(e) => setComplemento(e.target.value)} />
 
-            <button type="submit">Registrar</button>
+            <button type="submit">fRegistrar</button>
 
           </form>
 
